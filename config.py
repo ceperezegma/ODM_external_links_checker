@@ -7,7 +7,7 @@ load_dotenv()
 # -------------------------------
 # USER INPUT: Pick environment to work with
 # -------------------------------
-ENVIRONMENT = "PROD" # DEV, H-PROD, or PROD
+ENVIRONMENT = "DEV" # DEV, H-PROD, or PROD
 
 
 EXPECTED_FILES_PATH = "expected_files.json"

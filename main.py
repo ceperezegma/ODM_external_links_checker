@@ -15,7 +15,7 @@ This module is intended to be executed as a script.
 
 import time
 from src.auth import login_to_spa
-# from src.navigator import visit_all_tabs
+from src.navigator import visit_links_tabs
 # TODO: To delete from src.startup import initializer
 # from src.validator import validate_downloads
 # from src.reporter import generate_report
@@ -50,7 +50,7 @@ def main():
             main()
     """
     start_time = time.time()
-    print("[*] Starting ODM File Checker...")
+    print("[*] Starting ODM External Links Checker...")
 
     # Make all the cleaning and setup to start the program from the right inital state
     # TODO: To delete initializer()
@@ -58,9 +58,9 @@ def main():
     # Step 1: Log in and get browser/page
     browser, page = login_to_spa()
 
-    # # Step 2: Navigate all tabs and download files
-    # visit_all_tabs(page)
-    #
+    # Step 2: Navigate all tabs and download files
+    visit_links_tabs(page)
+
     # # Step 3: Validate downloaded files
     # validation_results = validate_downloads(EXPECTED_FILES_PATH)
     #

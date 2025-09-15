@@ -50,10 +50,41 @@ def login_to_spa():
         # Use the returned page for further navigation...
     """
     playwright = sync_playwright().start()
-    browser = playwright.chromium.launch(
-        headless=HEADLESS,
-        args=["--start-maximized"]
-    )
+    try:
+        browser = playwright.chromium.launch(
+            headless=HEADLESS,
+            args=["--start-maximized"])
+    except Exception as e:
+        msg = str(e)
+        if "Executable doesn't exist" in msg or "executablePath" in msg or "Failed to launch" in msg:
+            print("[!] Playwright-managed Chromium not found. Falling back to a system-installed browser channel...")
+            last_error = e
+            # Try common channels in order: Installed chrome or edge
+            for channel in ("chrome", "msedge", "chrome-beta", "msedge-beta"):
+                try:
+                    print(f"[*] Attempting to launch via channel: {channel}")
+                    browser = playwright.chromium.launch(
+                        headless=HEADLESS,
+                        channel=channel,
+                        args=["--start-maximized"]
+                    )
+                    print(f"[i] Launched browser via channel: {channel}")
+                    break
+                except Exception as ce:
+                    last_error = ce
+                    continue
+            else:
+                # If all channels failed, provide a clear actionable message.
+                raise RuntimeError(
+                    "Unable to launch a browser. Neither the Playwright-managed Chromium is installed "
+                    "nor a compatible system browser channel (chrome/msedge) was found.\n"
+                    "Options:\n"
+                    "  - Install Playwright browsers (preferred for consistent CI): run `playwright install`\n"
+                    "  - Or install Chrome or Microsoft Edge on this machine so the code can use a system channel."
+                ) from last_error
+        else:
+            # Re-raise unexpected launch errors
+            raise
 
     # Create context with HTTP Basic Auth and full screen viewport
     if ENVIRONMENT in ('DEV', 'H-PROD'):
