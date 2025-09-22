@@ -8,7 +8,7 @@ robust strategy to activate each tab, attempting both href-based and text-based
 selection, and reports navigation progress and potential issues.
 """
 
-# TODO from src.downloader import download_all_files
+from src.links_extractor import external_links_extractor
 
 
 def visit_links_tabs(page):
@@ -41,12 +41,26 @@ def visit_links_tabs(page):
         visit_all_tabs(page)
     """
     tabs = {
-        'Recommendations': '#recommendations',
-        'Dimensions': '#dimensions',
-        'Country profiles': '#country-profiles'
+        'recommendations': '#recommendations',
+        'dimensions': '#dimensions',
+        'country_profiles': '#country-profiles'
+    }
+
+    retrieve_links_tab = {
+        'recommendations': [],
+        'dimensions': [],
+        'country_profiles': []
     }
 
     for tab_name, tab_selector in tabs.items():
+        match tab_name:
+            case 'recommendations':
+                tab_name = 'Recommendations'
+            case 'dimensions':
+                tab_name = 'Dimensions'
+            case 'country_profiles':
+                tab_name = 'Country profiles'
+
         print(f"\n---------------------------------")
         print(f"[*] Navigating to tab: {tab_name}")
         print(f"---------------------------------")
@@ -62,7 +76,7 @@ def visit_links_tabs(page):
                 print(f"[+] Clicked on tab using href: {tab_name}")
                 clicked = True
         except Exception as e:
-            print(f"[!] Href strategy failed for {tab_name}: {e}")
+            print(f"[❌] Href strategy failed for {tab_name}: {e}")
         
         # Strategy 2: Try text match if href failed
         if not clicked:
@@ -71,20 +85,30 @@ def visit_links_tabs(page):
                 print(f"[+] Clicked on tab using text: {tab_name}")
                 clicked = True
             except Exception as e:
-                print(f"[!] Text strategy failed for {tab_name}: {e}")
+                print(f"[❌] Text strategy failed for {tab_name}: {e}")
         
         if not clicked:
             print(f"[❌] Could not click tab '{tab_name}' with any strategy")
             continue
 
-        # Wait for tab-specific content to load
-        page.wait_for_timeout(1000)  # Short buffer
-        
         # Verify we're on the correct tab by checking URL
         current_url = page.url
         if tab_selector not in current_url:
             print(f"[⚠️] Warning: Expected '{tab_selector}' in URL but got: {current_url}")
-            print(f"[!] Tab navigation may have failed for: {tab_name}")
+            print(f"[⚠️] Tab navigation may have failed for: {tab_name}")
 
-        # Add logic to confirm content changed (by checking unique element)
-        # TODO download_all_files(page, tab_name)
+
+        # Add logic to extract external links by tab
+        match tab_name:
+            case 'Recommendations':
+                retrieve_links_tab['recommendations'].append(external_links_extractor(page, tab_name))
+            case 'Dimensions':
+                retrieve_links_tab['dimensions'].append(external_links_extractor(page, tab_name))
+            case 'Country profiles':
+                retrieve_links_tab['country_profiles'].append(external_links_extractor(page, tab_name))
+            case _:
+                print(f"[❌] Error at tab selection. Selected '{tab_name}'")
+
+
+    pass
+

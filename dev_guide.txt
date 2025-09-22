@@ -1,0 +1,15 @@
+✅1. Navigator: Goes throught the tabs with the external links - Recommendations, Dimensions, and Country profiles
+2. Links extractor: For each tab in the Navigator, extract the external links and save them in a dic as a list. Some tabs require clicking inside the tab to change page and retrieve the external links again
+NOTE: I implemented to click on the tabs of the tables in the Dimensions tab. Next step to implement is to retrieve all the extenal links in the tab with the new page in table
+
+
+3. Links cleaner: Create a clean with all the external links
+4. Links checker: From the clean list of external links, checks their status and store them
+5. Reporter: it does different things:
+    - Compares the list of expected external links and the retrieved ones and displays:
+        * Links missing
+        * Links not expected but present
+    - For each external link present displays:
+        * Total of links working properly (status 200)
+        * Total and list of links not working properly
+END
