@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca35a17e-0022-47f7-9a04-a1dcad104ea8" name="Changes" comment="Added feature to navigate through the different pages of tables">
-      <change afterPath="$PROJECT_DIR$/src/country_buttons_manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/links_cleaner.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/links_validator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reporter.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/startup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev_guide.txt" beforeDir="false" afterPath="$PROJECT_DIR$/dev_guide.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/links_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/links_extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/navigator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigator.py" afterDir="false" />
+    <list default="true" id="ca35a17e-0022-47f7-9a04-a1dcad104ea8" name="Changes" comment="Added functions to clean links by tab, check the HTTP status of the ODM links, and generate the report to the user">
+      <change beforePath="$PROJECT_DIR$/src/reporter.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reporter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +51,7 @@
     "Python.auth.executor": "Run",
     "Python.config.executor": "Run",
     "Python.links_extractor.executor": "Run",
-    "Python.main.executor": "Debug",
+    "Python.main.executor": "Run",
     "Python.manifesto_json_generator.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -159,7 +150,7 @@
       <workItem from="1758532628003" duration="24624000" />
       <workItem from="1758794289061" duration="9599000" />
       <workItem from="1758814798153" duration="14725000" />
-      <workItem from="1759133306752" duration="21020000" />
+      <workItem from="1759133306752" duration="22130000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -185,7 +176,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758564770626</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added functions to clean links by tab, check the HTTP status of the ODM links, and generate the report to the user">
+      <option name="closed" value="true" />
+      <created>1759160785156</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759160785156</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -206,7 +205,8 @@
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Added feature to launch the webapp and navigate through pages with external links" />
     <MESSAGE value="Added feature to navigate through the different pages of tables" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added feature to navigate through the different pages of tables" />
+    <MESSAGE value="Added functions to clean links by tab, check the HTTP status of the ODM links, and generate the report to the user" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added functions to clean links by tab, check the HTTP status of the ODM links, and generate the report to the user" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
@@ -216,7 +216,7 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/odm_external_links_checker$main.coverage" NAME="main Coverage Results" MODIFIED="1759159729118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/odm_external_links_checker$main.coverage" NAME="main Coverage Results" MODIFIED="1759161643636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$auth.coverage" NAME="auth Coverage Results" MODIFIED="1757696440794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$links_extractor.coverage" NAME="links_extractor Coverage Results" MODIFIED="1757942266445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$manifesto_json_generator.coverage" NAME="manifesto_json_generator Coverage Results" MODIFIED="1759146647650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

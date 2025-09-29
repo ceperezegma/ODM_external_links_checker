@@ -147,6 +147,54 @@ def _print_centered(title: str):
 
 
 # -------------------------
+# HTTP status pretty labels
+# -------------------------
+
+def _status_label(status) -> str:
+    """Return a short label with icon for a given HTTP status.
+
+    Handles both int and string-like inputs. Falls back to a generic label.
+    """
+    # Normalize to int when possible
+    if isinstance(status, int):
+        code = status
+    else:
+        try:
+            code = int(str(status))
+        except Exception:
+            code = None
+
+    labels = {
+        100: "⏩ Continue",
+        101: "🔁 Switching Protocols",
+        102: "⏳ Processing",
+        200: "✅ OK",
+        201: "✨ Created",
+        202: "📨 Accepted",
+        203: "ℹ️ Non-authoritative Information",
+        300: "🔀 Multiple Choices",
+        301: "🔁 Moved Permanently",
+        302: "🔀 Found (Temporary Redirect)",
+        303: "👀 See Other",
+        304: "🗄️ Not Modified",
+        400: "❌ Bad Request",
+        401: "🔒 Unauthorized",
+        402: "💳 Payment Required",
+        403: "🚫 Forbidden",
+        404: "❌ Not Found",
+        500: "⚠️ Internal Server Error",
+        501: "🧩 Not Implemented",
+        502: "🧱 Bad Gateway",
+        503: "⏳ Service Unavailable",
+        504: "⌛ Gateway Timeout",
+    }
+
+    if code in labels:
+        return f" - {labels[code]}"
+    return " - ❓ Other status"
+
+
+# -------------------------
 # Public API
 # -------------------------
 
@@ -267,26 +315,7 @@ def generate_screen_report(status_dir: str = "link_status", manifest_path: str =
             return (0, k) if isinstance(k, int) else (1, str(k))
 
         for status in sorted(non_working_by_status.keys(), key=_status_sort_key):
-            match status:
-                case 301:
-                    status_icon = " - 🔀 Redirection"
-                case 302:
-                    status_icon = " - 🔀 Temporary redirection"
-                case 400:
-                    status_icon = " - ❌ Client Error"
-                case 401:
-                    status_icon = " - 🔒 Authentication"
-                case 403:
-                    status_icon = " - 🚫 Permission Denied"
-                case 404:
-                    status_icon = " - ❌ Broken Link"
-                case 500:
-                    status_icon = " - ⚠️ Server Error"
-                case 503:
-                    status_icon = " - ⏳ Server Overloaded (eventually it needs to check you're a human)"
-                case _:
-                    status_icon = " - ❓ Other status"
-
+            status_icon = _status_label(status)
             print(f"Status {status}{status_icon}:")
             tabs_map = non_working_by_status[status]
             # Print tabs in a consistent order
