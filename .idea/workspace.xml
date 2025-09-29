@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ca35a17e-0022-47f7-9a04-a1dcad104ea8" name="Changes" comment="Added feature to launch the webapp and navigate through pages with external links">
-      <change afterPath="$PROJECT_DIR$/dev_guide.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/manifesto_json_generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/links_extractor.py" afterDir="false" />
+    <list default="true" id="ca35a17e-0022-47f7-9a04-a1dcad104ea8" name="Changes" comment="Added feature to navigate through the different pages of tables">
+      <change afterPath="$PROJECT_DIR$/src/country_buttons_manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/links_cleaner.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/links_validator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reporter.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/startup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev_guide.txt" beforeDir="false" afterPath="$PROJECT_DIR$/dev_guide.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/links_extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/links_extractor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/navigator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,13 +60,14 @@
     "Python.auth.executor": "Run",
     "Python.config.executor": "Run",
     "Python.links_extractor.executor": "Run",
-    "Python.main.executor": "Run",
+    "Python.main.executor": "Debug",
     "Python.manifesto_json_generator.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/Dropbox/Programming/Python/deu/odm_external_links_checker/src",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -72,6 +77,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Dropbox\Programming\Python\deu\odm_external_links_checker\src" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="odm_external_links_checker" />
@@ -129,8 +139,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178" />
-        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-PY-252.26199.168" />
+        <option value="bundled-python-sdk-b3d66beaba9a-c6efb3732140-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.26199.168" />
       </set>
     </attachedChunks>
   </component>
@@ -146,7 +156,10 @@
       <workItem from="1757934974457" duration="1697000" />
       <workItem from="1757936985162" duration="26181000" />
       <workItem from="1758523574571" duration="711000" />
-      <workItem from="1758532628003" duration="19160000" />
+      <workItem from="1758532628003" duration="24624000" />
+      <workItem from="1758794289061" duration="9599000" />
+      <workItem from="1758814798153" duration="14725000" />
+      <workItem from="1759133306752" duration="21020000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <option name="closed" value="true" />
@@ -164,7 +177,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757935693514</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added feature to navigate through the different pages of tables">
+      <option name="closed" value="true" />
+      <created>1758564770626</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1758564770626</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -184,24 +205,21 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Added feature to launch the webapp and navigate through pages with external links" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added feature to launch the webapp and navigate through pages with external links" />
+    <MESSAGE value="Added feature to navigate through the different pages of tables" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added feature to navigate through the different pages of tables" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/links_extractor.py</url>
-          <line>58</line>
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="links_raw_tab" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/odm_external_links_checker$main.coverage" NAME="main Coverage Results" MODIFIED="1758564536370" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/odm_external_links_checker$main.coverage" NAME="main Coverage Results" MODIFIED="1759159729118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$auth.coverage" NAME="auth Coverage Results" MODIFIED="1757696440794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$links_extractor.coverage" NAME="links_extractor Coverage Results" MODIFIED="1757942266445" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/odm_external_links_checker$manifesto_json_generator.coverage" NAME="manifesto_json_generator Coverage Results" MODIFIED="1758533027898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/odm_external_links_checker$manifesto_json_generator.coverage" NAME="manifesto_json_generator Coverage Results" MODIFIED="1759146647650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/odm_external_links_checker$config.coverage" NAME="config Coverage Results" MODIFIED="1757694869041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
-# from playwright.sync_api import sync_playwright
+
+from src.country_buttons_manager import retrieve_buttons, select_button
 
 
 def retrieve_external_links(page):
 
-    return page.locator("""//a[@href 
-                                        and not(starts-with(@href, 'https://data.europa.eu')) 
-                                        and not(starts-with(@href, 'https://op.europa.eu')) 
-                                        and not(starts-with(@href, 'https://european-union.europa.eu')) 
-                                        and not(starts-with(@href, 'https://dataeuropa.gitlab.io')) 
-                                        and not(starts-with(@href, 'https://twitter.com')) 
-                                        and not(starts-with(@href, 'https://www.linkedin.com')) 
-                                        and not(starts-with(@href, 'https://www.youtube.com/c/PublicationsOffice')) 
-                                        and not(starts-with(@href, 'https://www.instagram.com')) 
-                                        and not(starts-with(@href, 'https://ec.europa.eu')) 
-                                        and not(starts-with(@href, 'https://eur-lex.europa.eu')) 
-                                        and not(starts-with(@href, 'https://ted.europa.eu/en'))
-                                        and not(starts-with(@href, 'https://cordis.europa.eu')) 
-                                        and not(starts-with(@href, 'http://europa.eu')) 
-                                        and starts-with(@href, 'http')
-                                        ]""")
+    return page.locator("""//a[@href and not(starts-with(@href, 'https://data.europa.eu')) 
+                                     and not(starts-with(@href, 'https://op.europa.eu')) 
+                                     and not(starts-with(@href, 'https://european-union.europa.eu')) 
+                                     and not(starts-with(@href, 'https://dataeuropa.gitlab.io')) 
+                                     and not(starts-with(@href, 'https://twitter.com')) 
+                                     and not(starts-with(@href, 'https://www.linkedin.com')) 
+                                     and not(starts-with(@href, 'https://www.youtube.com/c/PublicationsOffice')) 
+                                     and not(starts-with(@href, 'https://www.instagram.com')) 
+                                     and not(starts-with(@href, 'https://ec.europa.eu')) 
+                                     and not(starts-with(@href, 'https://eur-lex.europa.eu')) 
+                                     and not(starts-with(@href, 'https://ted.europa.eu/en'))
+                                     and not(starts-with(@href, 'https://cordis.europa.eu')) 
+                                     and not(starts-with(@href, 'http://europa.eu')) 
+                                     and not(starts-with(@href, 'https://style-guide.europa.eu/'))
+                                     and not(starts-with(@href, 'https://www.europa.eu/'))
+                                     and starts-with(@href, 'https://') 
+                                     or starts-with(@href, 'http://')
+                                 ]""")
 
 
 def click_odm_button(page, dimension):
@@ -38,7 +41,18 @@ def get_links_from_elements(links_elements):
     return  external_links_tab
 
 
+def links_extractor(page):
+
+    links_elements = retrieve_external_links(page)
+    external_links_tab_raw = get_links_from_elements(links_elements)
+
+    return external_links_tab_raw
+
+
+
 def change_page_table(page, dimension):
+
+    links_raw_tab = []
 
     nav_table = page.locator("//nav[starts-with(@aria-label, 'pagination-heading')]")
     num_nav_table = nav_table.count()
@@ -51,12 +65,15 @@ def change_page_table(page, dimension):
         case 'Impact':
             current_nav = nav_table.nth(2)
 
-    print(f"-> Table: {current_nav.get_attribute('aria-label')}")
+    print(f"[i] Extracting links from the table: {current_nav.get_attribute('aria-label')}")
 
     # Keep clicking "Next" while the link exists and is visible. This is scoped to the selected paginator to avoid strict-mode issues.
     safety_max_clicks = 200  # safety guard to avoid infinite loops
     clicks = 0
     while True:
+        # Extract links of the current page
+        links_raw_tab.extend(links_extractor(page))
+
         next_link = current_nav.locator("//a[@title='Go to next page']")
         if next_link.count() == 0 or not next_link.first.is_visible():
             print("[i] No 'Next' link found. Stopping pagination.")
@@ -66,29 +83,54 @@ def change_page_table(page, dimension):
         page.wait_for_timeout(1000)    # Added this timeout to wait the ODM page loads the next page of the table
         clicks += 1
         print(f"[i] Clicked 'Next' ({clicks})")
-
-        # # Allow content to update; adjust as needed for your SPA
-        # try:
-        #     page.wait_for_load_state("networkidle", timeout=3000)
-        # except Exception:
-        #     # Fall back to a small delay if networkidle is not reliable in this SPA
-        #     page.wait_for_timeout(500)
-
         if clicks >= safety_max_clicks:
             print("[❌] Reached safety limit for pagination clicks. Stopping to avoid infinite loop.")
             break
 
+    return links_raw_tab
+
+
+def remove_duplicates_tab(external_links_tab_raw):
+ """
+     Returns a new list containing only the first occurrence of each element from
+     external_links_tab_raw, preserving order and skipping None values.
+ """
+ seen = set()
+ external_links_tab_clean = []
+ for item in external_links_tab_raw:
+     if item is None:
+         continue
+     if item not in seen:
+         seen.add(item)
+         external_links_tab_clean.append(item)
+
+ return external_links_tab_clean
+
+
+def links_extractor_countries(page, country_buttons, countries):
+
+    links_raw_tab= []
+
+    num_countries = len(country_buttons)
+    for i in range(num_countries):
+        select_button(page, country_buttons[i], countries[i])
+        print(f"[i] Extracting external links for country: {countries[i][0]}")
+
+        links_raw_tab.extend(links_extractor(page))
+
+    return links_raw_tab
 
 
 
-
-
+#######
+# Core function for links extraction across ODM
 def external_links_extractor(page, tab_name):
+
+    external_links_tab_raw = []
 
     match tab_name:
         case 'Recommendations':
-            links_elements = retrieve_external_links(page)
-            external_links_tab_raw = get_links_from_elements(links_elements)
+            external_links_tab_raw.extend(links_extractor(page))
         case 'Dimensions':
             dimensions = [('Policy', 1), ('Portal', 1), ('Quality', 0), ('Impact', 1)]    # in format: (<dimension>, <is there a table?>) -> is there a table? = 1 if yes, 0 if no
 
@@ -97,17 +139,51 @@ def external_links_extractor(page, tab_name):
 
                 click_odm_button(page, dimension)
                 if dimension[1] == 1:
-                    change_page_table(page, dimension)
-
-                # TODO: I'm here!!
-                links_elements = retrieve_external_links(page)
-                external_links_tab_raw = get_links_from_elements(links_elements)
+                    external_links_tab_raw.extend(change_page_table(page, dimension))
         case 'Country profiles':
-            links_elements = retrieve_external_links(page)
-            external_links_tab_raw = get_links_from_elements(links_elements)
+            countries = combined = [
+                ('Albania', 'AL'),
+                ('Austria', 'AT'),
+                ('Belgium', 'BE'),
+                ('Bosnia and Herzegovina', 'BA'),
+                ('Bulgaria', 'BG'),
+                ('Croatia', 'HR'),
+                ('Cyprus', 'CY'),
+                ('Czechia', 'CZ'),
+                ('Denmark', 'DK'),
+                ('Estonia', 'EE'),
+                ('Finland', 'FI'),
+                ('France', 'FR'),
+                ('Germany', 'DE'),
+                ('Greece', 'EL'),
+                ('Hungary', 'HU'),
+                ('Iceland', 'IS'),
+                ('Ireland', 'IE'),
+                ('Italy', 'IT'),
+                ('Latvia', 'LV'),
+                ('Lithuania', 'LT'),
+                ('Luxembourg', 'LU'),
+                ('Malta', 'MT'),
+                ('Netherlands', 'NL'),
+                ('Norway', 'NO'),
+                ('Poland', 'PL'),
+                ('Portugal', 'PT'),
+                ('Romania', 'RO'),
+                ('Serbia', 'RS'),
+                ('Slovakia', 'SK'),
+                ('Slovenia', 'SI'),
+                ('Spain', 'ES'),
+                ('Sweden', 'SE'),
+                ('Switzerland', 'CH'),
+                ('Ukraine', 'UA')]
 
-    print(f"Number of external links found: {len(external_links_tab_raw)}")
+            country_buttons = retrieve_buttons(page, countries)
 
-    return external_links_tab_raw
+            external_links_tab_raw.extend(links_extractor_countries(page, country_buttons, countries))
+
+    external_links_clean =  remove_duplicates_tab(external_links_tab_raw)
+    print(f"[i] Number of external links found: {len(external_links_tab_raw)}")
+
+    return external_links_clean
     
 

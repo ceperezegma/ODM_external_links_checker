@@ -61,9 +61,9 @@ def visit_links_tabs(page):
             case 'country_profiles':
                 tab_name = 'Country profiles'
 
-        print(f"\n---------------------------------")
+        print(f"\n-----------------------------------------")
         print(f"[*] Navigating to tab: {tab_name}")
-        print(f"---------------------------------")
+        print(f"-----------------------------------------")
 
         # Find the tab element using multiple strategies
         clicked = False
@@ -101,14 +101,14 @@ def visit_links_tabs(page):
         # Add logic to extract external links by tab
         match tab_name:
             case 'Recommendations':
-                retrieve_links_tab['recommendations'].append(external_links_extractor(page, tab_name))
+                retrieve_links_tab['recommendations'].extend(external_links_extractor(page, tab_name))
             case 'Dimensions':
-                retrieve_links_tab['dimensions'].append(external_links_extractor(page, tab_name))
+                retrieve_links_tab['dimensions'].extend(external_links_extractor(page, tab_name))
             case 'Country profiles':
-                retrieve_links_tab['country_profiles'].append(external_links_extractor(page, tab_name))
+                retrieve_links_tab['country_profiles'].extend(external_links_extractor(page, tab_name))
             case _:
                 print(f"[❌] Error at tab selection. Selected '{tab_name}'")
 
 
-    pass
+    return retrieve_links_tab
 
