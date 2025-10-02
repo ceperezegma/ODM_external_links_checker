@@ -4,7 +4,18 @@ from src.country_buttons_manager import retrieve_buttons, select_button
 
 
 def retrieve_external_links(page):
+    """
+    Locate all external links on the page excluding specific domains.
 
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            query DOM elements.
+
+    Returns:
+        playwright.sync_api.Locator: Locator object containing all anchor elements
+            with href attributes that match the filtering criteria (external links
+            excluding EU/social media domains).
+    """
     return page.locator("""//a[@href and not(starts-with(@href, 'https://data.europa.eu')) 
                                      and not(starts-with(@href, 'https://op.europa.eu')) 
                                      and not(starts-with(@href, 'https://european-union.europa.eu')) 
@@ -26,12 +37,34 @@ def retrieve_external_links(page):
 
 
 def click_odm_button(page, dimension):
+    """
+    Locate and click a dimension button by its aria-label attribute.
 
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            locate and interact with the button element.
+        dimension (tuple or list): Container where the first element (dimension[0])
+            is the dimension name used to identify the button (e.g., "Policy",
+            "Portal", "Impact").
+
+    Returns:
+        None
+    """
     page.locator(f"//button[@aria-label='Select {dimension[0]}']").click()
 
 
 def get_links_from_elements(links_elements):
+    """
+    Extract href attributes from all link elements in a locator.
 
+    Args:
+        links_elements (playwright.sync_api.Locator): Locator object containing
+            one or more anchor elements from which to extract href attributes.
+
+    Returns:
+        list: List of href attribute values (strings) extracted from each link
+            element in the locator.
+    """
     external_links_tab = []
 
     num_external_links = links_elements.count()
@@ -42,7 +75,17 @@ def get_links_from_elements(links_elements):
 
 
 def links_extractor(page):
+    """
+    Extract all external link URLs from the current page.
 
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            query and extract links from the current page content.
+
+    Returns:
+        list: List of external link URLs (strings) found on the page, including
+            duplicates and unfiltered results.
+    """
     links_elements = retrieve_external_links(page)
     external_links_tab_raw = get_links_from_elements(links_elements)
 
@@ -51,7 +94,20 @@ def links_extractor(page):
 
 
 def change_page_table(page, dimension):
+    """
+    Navigate through paginated table pages and extract links from each page.
 
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            interact with pagination controls and extract links.
+        dimension (tuple or list): Container where the first element (dimension[0])
+            is the dimension name used to identify the correct table paginator
+            (e.g., "Policy", "Portal", "Impact").
+
+    Returns:
+        list: List of external link URLs (strings) extracted from all pages of
+            the table, aggregated across all pagination clicks.
+    """
     links_raw_tab = []
 
     nav_table = page.locator("//nav[starts-with(@aria-label, 'pagination-heading')]")
@@ -108,7 +164,17 @@ def remove_duplicates_tab(external_links_tab_raw):
 
 
 def links_extractor_countries(page, country_buttons, countries):
+    """
+    Remove duplicate URLs from a list while preserving order and filtering out None values.
 
+    Args:
+        external_links_tab_raw (list): List of URLs that may contain duplicates
+            and None values.
+
+    Returns:
+        list: Deduplicated list of URLs with only the first occurrence of each
+            unique URL preserved in original order, with None values excluded.
+    """
     links_raw_tab= []
 
     num_countries = len(country_buttons)
@@ -121,11 +187,23 @@ def links_extractor_countries(page, country_buttons, countries):
     return links_raw_tab
 
 
-
-#######
+# -----------------------------------------------
 # Core function for links extraction across ODM
+#-----------------------------------------------
 def external_links_extractor(page, tab_name):
+    """
+    Extract and deduplicate external links from a specific ODM tab.
 
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            interact with the tab content and extract links.
+        tab_name (str): Name of the tab to extract links from. Must be one of:
+            "Recommendations", "Dimensions", or "Country profiles".
+
+    Returns:
+        list: Deduplicated list of external link URLs (strings) extracted from
+            the specified tab, with None values removed and order preserved.
+    """
     external_links_tab_raw = []
 
     match tab_name:

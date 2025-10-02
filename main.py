@@ -6,7 +6,7 @@ High-level steps coordinated by this script:
 1. Initialize and clean the environment.
 2. Authenticate and open the SPA in a Playwright browser.
 3. Visit all relevant tabs and trigger file downloads.
-4. Validate the downloaded files against expectations.
+4. Extract all the ODM external links from the tabs and clean them against the manifesto.
 5. Generate a final report.
 6. Keep the browser open until the user confirms exit.
 
@@ -14,14 +14,14 @@ This module is intended to be executed as a script.
 """
 
 import time
+
 from src.auth import login_to_spa
-from src.startup import initializer
-from src.navigator import visit_links_tabs
-from src.links_cleaner import clean_links_for_tab, clean_links_for_dimensions
+from src.links_cleaner import clean_links_for_tab
 from src.links_validator import check_and_save_link_statuses_by_tab
+from src.navigator import visit_links_tabs
 # from src.validator import validate_downloads
 from src.reporter import generate_screen_report
-from config import EXPECTED_FILES_PATH
+from src.startup import initializer
 
 
 def main():

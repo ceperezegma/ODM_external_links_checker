@@ -15,11 +15,40 @@ Raises
 RuntimeError: If no link column is found in the input Excel file.
 """
 
-import pandas as pd
 import json
 import re
 
+import pandas as pd
+
+
 def excel_to_json(input_excel: str, output_json: str):
+    """
+    Convert an Excel file containing external links into a structured JSON file.
+
+    Args:
+        input_excel (str): Path to the input Excel file.
+        output_json (str): Path where the output JSON file will be saved.
+
+    Raises:
+        RuntimeError: If no link column is found in the Excel file.
+
+    Notes:
+        - The function reads the first sheet of the Excel file and treats all cells
+          as strings, stripping whitespace.
+        - Columns are located heuristically using possible names:
+            * Tab/Section/Category → determines the tab name.
+            * Level/Tier/Depth → optional, determines the level for each link.
+            * External link/Link/URL/Href → identifies the URLs.
+        - Cells containing multiple URLs separated by spaces, commas, or semicolons
+          are split into separate entries.
+        - Only strings starting with "http://" or "https://" are considered valid URLs.
+        - The resulting JSON structure is a dictionary mapping tab names to lists of
+          dictionaries, each containing:
+              - "level": the level string (may be empty)
+              - "url": the external link
+        - Tab order in the JSON preserves the order found in the Excel file.
+        - The function prints a confirmation message when the JSON file is saved.
+    """
     # Load Excel
     df = pd.read_excel(input_excel, sheet_name=0, dtype=str)
 

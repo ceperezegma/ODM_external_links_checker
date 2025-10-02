@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Set, Tuple, Union
+from typing import Dict, List, Set, Tuple, Union
 from urllib.parse import urlsplit, urlunsplit
 
 Manifest = Dict[str, List[Dict[str, str]]]
@@ -74,6 +74,22 @@ def _normalize_url(url: str) -> str:
 # -------------------------
 
 def _load_manifest_from_path(path: Union[str, Path]) -> Manifest:
+    """
+    Load and validate the manifest JSON file from the specified path.
+
+    Args:
+        path (Union[str, Path]): File path to the manifest JSON file, either as a
+            string or Path object.
+
+    Returns:
+        Manifest: Dictionary containing manifest data with tab names as keys
+            ("Recommendations", "Dimensions", "Country profiles") and lists of
+            link entries as values.
+
+    Raises:
+        ValueError: If the manifest is not a valid JSON object or is missing
+            required tab keys.
+    """
     p = Path(path)
     with p.open("r", encoding="utf-8") as f:
         data = json.load(f)
@@ -87,11 +103,18 @@ def _load_manifest_from_path(path: Union[str, Path]) -> Manifest:
 
 
 def _build_index(manifest: Manifest) -> Tuple[Dict[str, Set[str]], Dict[str, Set[str]]]:
-    """Build two indexes from the manifest.
+    """
+    Build lookup indexes from the manifest for efficient URL filtering.
+
+    Args:
+        manifest (Manifest): Dictionary containing tab names as keys and lists of
+            link entries (with "url" and "level" fields) as values.
 
     Returns:
-        - tab_index: map of tab name -> set(normalized URLs)
-        - dimensions_by_level: map of level name (Policy/Portal/Impact/...) -> set(normalized URLs)
+        Tuple[Dict[str, Set[str]], Dict[str, Set[str]]]: A tuple containing:
+            - tab_index: Mapping of tab name to set of normalized URLs for that tab
+            - dimensions_by_level: Mapping of dimension level names (e.g., "Policy",
+              "Portal", "Impact") to sets of normalized URLs for that level
     """
     tab_index: Dict[str, Set[str]] = {"Recommendations": set(), "Dimensions": set(), "Country profiles": set()}
     dimensions_by_level: Dict[str, Set[str]] = {}

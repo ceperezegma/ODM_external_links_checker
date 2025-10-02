@@ -25,19 +25,40 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
 
 # -----------------------------
 # Core single-link status check
 # -----------------------------
 
 def _now_iso() -> str:
+    """
+    Get the current UTC timestamp in ISO 8601 format.
+
+    Args:
+        None
+
+    Returns:
+        str: Current UTC datetime as an ISO 8601 formatted string.
+    """
     return datetime.now(timezone.utc).isoformat()
 
 
 def _build_ssl_context(verify_ssl: bool) -> ssl.SSLContext:
+    """
+    Create an SSL context with optional certificate verification.
+
+    Args:
+        verify_ssl (bool): Whether to verify SSL certificates. If True, creates
+            a default context with standard certificate verification. If False,
+            disables hostname checking and certificate verification.
+
+    Returns:
+        ssl.SSLContext: Configured SSL context for HTTPS requests.
+    """
     if verify_ssl:
         return ssl.create_default_context()
     # Unverified (not recommended for production, but useful if needed)
@@ -48,10 +69,23 @@ def _build_ssl_context(verify_ssl: bool) -> ssl.SSLContext:
 
 
 def _request(url: str, method: str, timeout: int, ctx: ssl.SSLContext, user_agent: str) -> Tuple[int, str, str]:
-    """Perform a single HTTP(S) request and return (status_code, final_url, reason).
-
-    Follows redirects automatically via urllib.
     """
+    Perform a single HTTP/HTTPS request and return response details.
+
+    Args:
+        url (str): Target URL to request.
+        method (str): HTTP method to use (e.g., "HEAD", "GET").
+        timeout (int): Request timeout in seconds.
+        ctx (ssl.SSLContext): SSL context for HTTPS requests.
+        user_agent (str): User-Agent header value to send with the request.
+
+    Returns:
+        Tuple[int, str, str]: A tuple containing:
+            - status_code: HTTP status code (int)
+            - final_url: Final URL after following redirects (str)
+            - reason: HTTP status reason phrase (str)
+    """
+
     headers = {"User-Agent": user_agent, "Accept": "*/*"}
     req = Request(url=url, method=method, headers=headers)
     start = time.perf_counter()
@@ -73,17 +107,25 @@ def _request(url: str, method: str, timeout: int, ctx: ssl.SSLContext, user_agen
 
 
 def check_link(url: str, timeout: int = 10, verify_ssl: bool = True, user_agent: str = "Mozilla/5.0 (compatible; ODM-LinkChecker/1.0)") -> Dict:
-    """Check a single link with HEAD then GET fallback.
+    """
+    Check the HTTP status of a single link with automatic fallback from HEAD to GET.
 
-    Returns a dict with:
-    - url: original URL
-    - final_url: URL after redirects (if any)
-    - status_code: int or None
-    - ok: bool (True if 200-399)
-    - method_used: 'HEAD' or 'GET'
-    - error: str or None
-    - elapsed_ms: float
-    - checked_at: ISO8601 UTC timestamp
+    Args:
+        url (str): The URL to check.
+        timeout (int, optional): Request timeout in seconds. Defaults to 10.
+        verify_ssl (bool, optional): Whether to verify SSL certificates. Defaults to True.
+        user_agent (str, optional): User-Agent header value. Defaults to "Mozilla/5.0 (compatible; ODM-LinkChecker/1.0)".
+
+    Returns:
+        Dict: Dictionary containing link check results with keys:
+            - url: Original URL checked
+            - final_url: URL after following redirects
+            - status_code: HTTP status code (int or None if error)
+            - ok: Boolean indicating if status is 200-399
+            - method_used: HTTP method used ('HEAD' or 'GET')
+            - error: Error message (str or None if successful)
+            - elapsed_ms: Elapsed time in milliseconds
+            - checked_at: ISO 8601 UTC timestamp of check
     """
     checked_at = _now_iso()
     ctx = _build_ssl_context(verify_ssl)
@@ -149,7 +191,23 @@ def check_link(url: str, timeout: int = 10, verify_ssl: bool = True, user_agent:
 # ---------------------------------
 
 def check_links_status(links: Iterable[str], max_workers: int = 12, timeout: int = 10, verify_ssl: bool = True) -> List[Dict]:
-    """Check a collection of links concurrently and return the structured results list."""
+    """
+    Check HTTP status of multiple links concurrently with deduplication.
+
+    Args:
+        links (Iterable[str]): Collection of URLs to check.
+        max_workers (int, optional): Maximum number of concurrent worker threads.
+            Defaults to 12.
+        timeout (int, optional): Request timeout in seconds for each link.
+            Defaults to 10.
+        verify_ssl (bool, optional): Whether to verify SSL certificates.
+            Defaults to True.
+
+    Returns:
+        List[Dict]: List of dictionaries, each containing check results for a link
+            with the same structure as returned by check_link().
+    """
+
     # Deduplicate while preserving order
     seen = set()
     deduped: List[str] = []
@@ -182,7 +240,18 @@ def check_links_status(links: Iterable[str], max_workers: int = 12, timeout: int
 
 
 def save_statuses(statuses: List[Dict], output_path: Path | str) -> None:
-    """Save statuses to a JSON file (list of objects)."""
+    """
+    Save link check statuses to a JSON file.
+
+    Args:
+        statuses (List[Dict]): List of status dictionaries to save, each containing
+            link check results from check_link() or check_links_status().
+        output_path (Path | str): File path where the JSON file will be saved.
+            Parent directories will be created if they don't exist.
+
+    Returns:
+        None
+    """
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
@@ -190,11 +259,11 @@ def save_statuses(statuses: List[Dict], output_path: Path | str) -> None:
 
 
 def check_and_save_link_statuses_by_tab(
-    links_by_tab: Dict[str, Iterable[str]],
-    output_dir: Path | str = "link_status",
-    max_workers: int = 12,
-    timeout: int = 10,
-    verify_ssl: bool = True,
+        links_by_tab: Dict[str, Iterable[str]],
+        output_dir: Path | str = "link_status",
+        max_workers: int = 12,
+        timeout: int = 10,
+        verify_ssl: bool = True
 ) -> Dict[str, str]:
     """Check link statuses per tab and save separate JSON files.
 

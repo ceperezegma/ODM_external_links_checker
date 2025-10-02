@@ -13,32 +13,17 @@ from src.links_extractor import external_links_extractor
 
 def visit_links_tabs(page):
     """
-    Navigate through all known tabs and trigger downloads for each.
+    Navigate through application tabs and extract external links from each.
 
-    Behavior:
-    - Defines the ordered set of tabs to visit along with their expected hash/href.
-    - For each tab:
-        - Attempts to click using an href selector; if unavailable, falls back to a text-based click.
-        - Waits briefly to allow content to load.
-        - Warns if the current URL does not contain the expected tab selector.
-        - Invokes download_all_files(page, tab_name) to handle tab-specific downloads.
-    - Prints progress and diagnostic messages throughout.
-
-    Parameters:
-        page (playwright.sync_api.Page): The active Playwright page used to interact
-            with the UI and switch between tabs.
+    Args:
+        page (playwright.sync_api.Page): Active Playwright page object used to
+            interact with the web application and navigate between tabs.
 
     Returns:
-        None
-
-    Side Effects:
-        - Performs UI interactions (clicks, waits).
-        - Triggers downloads via the downloader component.
-        - Writes diagnostic output to stdout.
-
-    Example:
-        # After successful authentication and landing on the main page:
-        visit_all_tabs(page)
+        dict: Dictionary mapping tab keys to lists of extracted URLs:
+            - 'recommendations': List of URLs from Recommendations tab
+            - 'dimensions': List of URLs from Dimensions tab
+            - 'country_profiles': List of URLs from Country profiles tab
     """
     tabs = {
         'recommendations': '#recommendations',
